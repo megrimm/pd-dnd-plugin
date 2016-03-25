@@ -1,0 +1,129 @@
+# META NAME drop-patch
+# META DESCRIPTION drop patch-files onto patches to create objects
+# META DESCRIPTION drop patch-files onto Pd-console to open patches
+
+# META AUTHOR IOhannes m zmölnig <zmoelnig@iem.at>
+# META AUTHOR Patrice Colet <colet.patrice@free.fr>
+# META AUTHOR Hans-Christoph Steiner <eighthave@users.sourceforge.net>
+
+::pdwindow::post "-\n"
+::pdwindow::post "Drag and Drop on Window\n"
+::pdwindow::post "Drag and Drop on Canvas\n"
+::pdwindow::post "-\n"
+
+#lappend ::auto_path $::current_plugin_loadpath
+set dir [file join $::current_plugin_loadpath tkdnd]
+source [file join $dir pkgIndex.tcl]
+
+package require tkdnd
+
+namespace eval ::dnd_object_create {
+    variable x 0
+    variable y 0
+}
+
+namespace eval ::text_on_patch {
+    variable x 0
+    variable y 0
+}
+
+#------------------------------------------------------------------------------#
+# create an object using the dropped filename
+
+proc ::dnd_object_create::bind_to_canvas {mytoplevel} {
+    ::tkdnd::drop_target register $mytoplevel DND_Files
+    bind $mytoplevel <<DropPosition>> {+::dnd_object_create::setxy %X %Y}
+    bind $mytoplevel <<Drop:DND_Files>> {::dnd_object_create::dropped_object_files %W %D}
+}
+
+
+proc ::dnd_object_create::setxy {newx newy} {
+    variable x $newx
+    variable y $newy
+    return "copy"
+}
+
+
+proc ::dnd_object_create::open_dropped_files {files} {
+    foreach file $files {
+        open_file $file
+   }
+}
+
+
+proc ::dnd_object_create::dropped_object_files {mytoplevel files} {
+    foreach file $files {
+	set ext  [file extension $file]
+	set obj  [file rootname [file tail $file]]
+	set dir  [file dirname $file]
+    if {$ext == ".pd"} {
+        set found 0
+        foreach pathdir [concat $::sys_searchpath $::sys_staticpath] {
+            ## if pathdir is relative, prepend pwd to it
+            set pathdir [file normalize $pathdir]
+            # check if the dropped file is in a subdirectory of our PATH
+            if { [string first $pathdir $dir ] == 0 } {
+                set found 1
+                set obj [string trimleft [file rootname [string range $file [string length $pathdir ] end]] /]
+                ::pdwindow::debug "dropping $obj from $pathdir on $::focused_window\n"
+                ::dnd_object_create::make_object $mytoplevel $obj
+                break
+                }
+	    }
+        if { 0 == $found } {
+            set obj [file rootname $file]
+            ::pdwindow::debug "dropping $obj on $::focused_window\n"
+            ::dnd_object_create::make_object $mytoplevel $obj
+        }
+        }
+    }
+    return "link"
+}
+
+
+proc ::dnd_object_create::make_object {w obj} {
+    variable x
+    variable y
+    set posx [expr $x - [winfo rootx $w]]
+    set posy [expr $y - [winfo rooty $w]]
+    pdsend "$w obj $posx $posy $obj"
+    return "dropped"
+}
+
+bind PatchWindow <<Loaded>> {+::dnd_object_create::bind_to_canvas %W}
+::tkdnd::drop_target register .pdwindow DND_Files
+bind .pdwindow <<Drop:DND_Files>> {::dnd_object_create::open_dropped_files %D}
+
+#------------------------------------------------------------------------------#
+# create an object using the dropped filename
+
+bind PatchWindow <<Loaded>> {+::text_on_patch::bind_to_dropped_text %W}
+
+proc ::text_on_patch::bind_to_dropped_text {mytoplevel} {
+    ::tkdnd::drop_target register $mytoplevel DND_Text
+    bind $mytoplevel <<DropPosition>> {+::text_on_patch::setxy %X %Y}
+    bind $mytoplevel <<Drop:DND_Text>> {::text_on_patch::make_comments %W %D}
+    # TODO bind to DropEnter and DropLeave to make window visually show whether it will accept the drop or not
+}
+
+proc ::text_on_patch::setxy {newx newy} {
+    variable x $newx
+    variable y $newy
+    return "copy"
+}
+
+proc ::text_on_patch::make_comments {mytoplevel text} {
+    variable x
+    variable y
+    set posx [expr $x - [winfo rootx $mytoplevel]]
+    set posy [expr $y - [winfo rooty $mytoplevel]]
+    #pdwindow::error "::text_on_patch::make_comments $mytoplevel text $posx $posy\n"
+    foreach line [split [regsub {\\\;} $text {}] "\n"] {
+        if {$line ne ""} {
+            set line [string map {"," " \\, " ";" " \\; "} $line]
+            pdsend "$mytoplevel text $posx $posy $line"
+        }
+        set posy [expr $posy + 20]
+    }
+    return "copy"
+}
