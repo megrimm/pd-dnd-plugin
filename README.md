@@ -8,7 +8,7 @@ build instructions
 libtkdnd as git submodule?
 
 
-##Building on Windows with Msys2
+## Building on Windows with Msys2
 
 Download the 64-bit installer from:
 
@@ -30,7 +30,7 @@ and the 32-bit tcl/tk pkgs:
  
 `pacman -S mingw32/mingw-w64-i686-tk` 
 
-###Optional for 64-bit (this is for Pds with 64-bit tcl/tk)
+### Optional for 64-bit (this is for Pds with 64-bit tcl/tk)
 
 The 64-bit compiler:
 
@@ -43,12 +43,12 @@ and the 64-bit tcl/tk pkgs:
 `pacman -S mingw64/mingw-w64-x86_64-tk`
 
 
-##Get tkdnd
+## Get tkdnd
 
 Clone or download:
 https://github.com/petasis/tkdnd.git
 
-##Build tkdnd
+## Build tkdnd
 
 Open the MinGW32 shell and do (for 64-bit open the MinGW64 shell):
 
@@ -66,6 +66,6 @@ You have built these 2 files:
 
 copy them to the `"pd-dnd-plugin/tkdnd"` folder.
 
-##Load the GUI plug-in on Pd
+## Load the GUI plug-in on Pd
 
 Copy the `pd-dnd-plugin`folder on your prefered externals folder and add the path. It should load when you start Pd.
