@@ -1,0 +1,39 @@
+#N canvas 104 55 914 617 12;
+#X symbolatom 149 417 75 0 0 0 - - -;
+#X symbolatom 197 383 60 0 0 0 - - -;
+#X symbolatom 268 351 50 0 0 0 - - -;
+#X symbolatom 269 319 50 0 0 0 - - -;
+#X floatatom 57 575 5 0 0 0 - - -;
+#X floatatom 75 547 5 0 0 0 - - -;
+#X text 689 382 path;
+#X text 687 320 file extension;
+#X text 687 352 file name without extension;
+#X text 690 418 full path and name;
+#X obj 57 272 dnd-fileinfo;
+#X text 50 23 1) drop .pd files to the console --> opens the patch.
+;
+#X obj 231 273 dnd-plugin/dnd-fileinfo;
+#X text 160 274 same as:;
+#X text 50 69 2) drop .pd files to this or any patch window --> adds
+the .pd file as an abstraction in the window.;
+#X text 49 134 3) drop text \, e.g selected from a web page \, to this
+or any patch window --> adds the text as a comment in the window.;
+#X text 52 199 4) drop any file to this or any patch window --> use
+[dnd-fileinfo] abstraction to get file info:;
+#X text 128 546 relative y position;
+#X text 108 575 relative x position;
+#X floatatom 97 521 5 0 0 0 - - -;
+#X floatatom 115 493 5 0 0 0 - - -;
+#X text 148 521 absolute x position;
+#X text 168 492 absolute y position;
+#X symbolatom 128 455 20 0 0 0 - - -;
+#X text 299 456 tk window name: use with [hcs/window_name];
+#X connect 10 0 4 0;
+#X connect 10 1 5 0;
+#X connect 10 2 19 0;
+#X connect 10 3 20 0;
+#X connect 10 4 23 0;
+#X connect 10 5 0 0;
+#X connect 10 6 1 0;
+#X connect 10 7 2 0;
+#X connect 10 8 3 0;
