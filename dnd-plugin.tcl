@@ -113,9 +113,12 @@ proc ::dnd_object_create::send_filename {w file ext dir obj} {
     set posy [expr $y - [winfo rooty $w]]
 ## same function like Ctrl+M
 ## the definition of this function is in Tcl/pd_connect.tcl, line 50
-#---------------------------modification by oliver 29.10.18--------------------#
-    ::pd_connect::pdsend "dnd-dropped $posx $posy $x $y $::focused_window $file "
 #------------------------------------------------------------------------------#
+# modified by oliver on 29.10.18
+
+    ::pd_connect::pdsend "dnd-dropped -ext symbol $ext, -name list $obj, -path list $dir, -window-name symbol $::focused_window, -global-coords list $x $y, -drop list $posx $posy $file "
+#------------------------------------------------------------------------------#
+
     ::pdwindow::debug "$w file $posx $posy $::focused_window $file \n"
     return "dropped"
 
