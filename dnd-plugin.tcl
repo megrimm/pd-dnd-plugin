@@ -5,10 +5,13 @@
 # META AUTHOR IOhannes m zmölnig <zmoelnig@iem.at>
 # META AUTHOR Patrice Colet <colet.patrice@free.fr>
 # META AUTHOR Hans-Christoph Steiner <eighthave@users.sourceforge.net>
-
+# 2018 Modifications by Oliver Stotz and Lucas Cordiviola 
+ 
 ::pdwindow::post "-\n"
 ::pdwindow::post "Drag and Drop on Window\n"
 ::pdwindow::post "Drag and Drop on Canvas\n"
+::pdwindow::post "Usage:\n"
+::pdwindow::post "See $::current_plugin_loadpath/dnd-plugin-help.pd\n"
 ::pdwindow::post "-\n"
 
 #lappend ::auto_path $::current_plugin_loadpath
@@ -74,11 +77,20 @@ proc ::dnd_object_create::dropped_object_files {mytoplevel files} {
             set obj [file rootname $file]
             ::pdwindow::debug "dropping $obj on $::focused_window\n"
             ::dnd_object_create::make_object $mytoplevel $obj
-        }
-        }
-    }
+ 
+			}
+			
+		# 2018 Modification
+		} else { ::dnd_object_create::send_filename $mytoplevel $file $ext $dir $obj
+		
+		}
+	
+	}
     return "link"
-}
+	}
+
+
+
 
 
 proc ::dnd_object_create::make_object {w obj} {
@@ -89,6 +101,34 @@ proc ::dnd_object_create::make_object {w obj} {
     pdsend "$w obj $posx $posy $obj"
     return "dropped"
 }
+
+
+#------------------------------------------------------------------------------#
+# 2018 Modification
+
+proc ::dnd_object_create::send_filename {w file ext dir obj} {
+	variable x
+    variable y
+    set posx [expr $x - [winfo rootx $w]]
+    set posy [expr $y - [winfo rooty $w]]
+## same function like Ctrl+M
+## the definition of this function is in Tcl/pd_connect.tcl, line 50
+#------------------------------------------------------------------------------#
+# modified by oliver on 29.10.18
+
+    ::pd_connect::pdsend "dnd-dropped -ext symbol $ext, -name list $obj, -path list $dir, -window-name symbol $::focused_window, -global-coords list $x $y, -drop list $posx $posy $file "
+#------------------------------------------------------------------------------#
+
+    ::pdwindow::debug "$w file $posx $posy $::focused_window $file \n"
+    return "dropped"
+
+	
+}
+#------------------------------------------------------------------------------#
+
+
+
+
 
 bind PatchWindow <<Loaded>> {+::dnd_object_create::bind_to_canvas %W}
 ::tkdnd::drop_target register .pdwindow DND_Files
