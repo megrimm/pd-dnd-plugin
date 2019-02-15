@@ -1,0 +1,25 @@
+#N canvas 314 270 1195 594 16;
+#X symbolatom 55 333 80 0 0 0 - - -;
+#X symbolatom 97 305 60 0 0 0 - - -;
+#X symbolatom 147 265 30 0 0 0 - - -;
+#X symbolatom 179 220 10 0 0 0 - - -;
+#X obj 64 56 bng 50 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X text 44 411 see also :;
+#X text 886 332 full;
+#X text 721 299 path;
+#X text 526 265 file;
+#X text 376 221 extension;
+#X text 132 69 <- drop file inside the bang box;
+#X obj 669 62 vsl 40 60 0 127 0 0 empty empty empty 0 -9 0 10 -262144
+-1 -1 0 1;
+#X text 157 97 You can use any other pd-gui object as listener :;
+#X obj 64 141 dnd-target;
+#X obj 150 411 dnd-openpanel;
+#X text 133 25 dnd-target : drag'n drop receiver;
+#X connect 4 0 13 0;
+#X connect 11 0 13 0;
+#X connect 13 0 0 0;
+#X connect 13 1 1 0;
+#X connect 13 2 2 0;
+#X connect 13 3 3 0;

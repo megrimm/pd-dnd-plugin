@@ -111,13 +111,48 @@ proc ::dnd_object_create::send_filename {w file ext dir obj} {
     variable y
     set posx [expr $x - [winfo rootx $w]]
     set posy [expr $y - [winfo rooty $w]]
+
 ## same function like Ctrl+M
 ## the definition of this function is in Tcl/pd_connect.tcl, line 50
+
+#------------------------------------------------------------------------------#
+# modified by jyg on 14.02.19
+# from pdtk_canvas.tcl, lines 276 and following ones
+
+      # get the canvas location that is currently the top left corner in the window
+    set tkcanvas [tkcanvas_name $w]
+    set scrollregion [$tkcanvas cget -scrollregion]
+    set left_xview_pix [expr [lindex [$tkcanvas xview] 0] * [lindex $scrollregion 2] ]
+    set top_yview_pix [expr [lindex [$tkcanvas yview] 0]* [lindex $scrollregion 3]]
+      # take the absolute mouse coords, substract the root of the canvas
+      # window, and add the area that is obscured by scrolling
+    set xrel [expr int($x - [winfo rootx $w] + $left_xview_pix)]
+    set yrel [expr int($y - [winfo rooty $w] + $top_yview_pix)]
+#------------------------------------------------------------------------------#
+
+
+
+
+
+
 #------------------------------------------------------------------------------#
 # modified by oliver on 29.10.18
 
-    ::pd_connect::pdsend "dnd-dropped -ext symbol $ext, -name list $obj, -path list $dir, -window-name symbol $::focused_window, -global-coords list $x $y, -drop list $posx $posy $file "
+    ::pd_connect::pdsend "dnd-dropped -ext symbol $ext, -name list $obj, -path list $dir, -window-name symbol $::focused_window, -global-coords list $x $y, -drop list $posx $posy $file, rel-coords list $xrel $yrel"
 #------------------------------------------------------------------------------#
+    
+ 
+#------------------------------------------------------------------------------#
+# modified by jyg on 14.02.19
+# generate click event where the file has been dropped
+
+   ::pd_connect::pdsend "$w mouse $xrel $yrel 1 0"
+   ::pd_connect::pdsend "$w mouseup $xrel $yrel 1"
+    # afterclick signal
+   ::pd_connect::pdsend "dnd-dropped -done"
+
+#------------------------------------------------------------------------------#
+
 
     ::pdwindow::debug "$w file $posx $posy $::focused_window $file \n"
     return "dropped"
