@@ -1,0 +1,22 @@
+#N canvas 1006 319 894 598 16;
+#X symbolatom 55 333 50 0 0 0 - - -;
+#X symbolatom 97 305 50 0 0 0 - - -;
+#X symbolatom 147 265 30 0 0 0 - - -;
+#X symbolatom 179 220 10 0 0 0 - - -;
+#X obj 64 78 bng 50 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X text 137 92 <- drop file here OR click to openpanel;
+#X text 615 335 full;
+#X text 633 301 path;
+#X text 617 264 file;
+#X text 614 235 extension;
+#X obj 64 141 dnd-openpanel;
+#X text 29 31 dnd-openpanel : Deluxe [openpanel] with cooked outputs
+and drag'n drop features, f 80;
+#X text 44 411 see also :;
+#X obj 150 411 dnd-target;
+#X connect 4 0 10 0;
+#X connect 10 0 0 0;
+#X connect 10 1 1 0;
+#X connect 10 2 2 0;
+#X connect 10 3 3 0;
