@@ -5,14 +5,15 @@
 # META AUTHOR IOhannes m zmölnig <zmoelnig@iem.at>
 # META AUTHOR Patrice Colet <colet.patrice@free.fr>
 # META AUTHOR Hans-Christoph Steiner <eighthave@users.sourceforge.net>
-# 2018 Modifications by Oliver Stotz and Lucas Cordiviola 
+# 2018 -2021 Modifications by Oliver Stotz and Lucas Cordiviola 
  
 ::pdwindow::post "-\n"
-::pdwindow::post "Drag and Drop on Window\n"
-::pdwindow::post "Drag and Drop on Canvas\n"
-::pdwindow::post "Usage:\n"
+::pdwindow::post "DND-Plugin 0.3\n"
+::pdwindow::post "Drag and Drop on Pd window or patch canvas\n\n"
 ::pdwindow::post "See $::current_plugin_loadpath/dnd-plugin-help.pd\n"
 ::pdwindow::post "-\n"
+#  ::pdwindow::post "Modified 18.03.2021 (Lucarda)\n"
+#  ::pdwindow::post "-\n"
 
 #lappend ::auto_path $::current_plugin_loadpath
 set dir [file join $::current_plugin_loadpath tkdnd]
@@ -53,6 +54,24 @@ proc ::dnd_object_create::open_dropped_files {files} {
    }
 }
 
+#---------------------------- 2021 Modification ----------------------------#
+
+proc ::dnd_object_create::string_to_ascii {string_value} {
+    set map {}
+    set result [lrepeat [string length $string_value] DUMMY]
+    set idx 0
+    foreach c [split $string_value ""] {
+        if {![dict exists $map $c]} {
+            scan $c %c ch
+            dict set map $c $ch
+        }
+        lset result $idx [dict get $map $c]
+        incr idx
+    }
+    return $result
+}
+
+#----------------------------End 2021 Modification --------------------------#
 
 proc ::dnd_object_create::dropped_object_files {mytoplevel files} {
     foreach file $files {
@@ -81,8 +100,10 @@ proc ::dnd_object_create::dropped_object_files {mytoplevel files} {
 			}
 			
 		# 2018 Modification
-		} else { ::dnd_object_create::send_filename $mytoplevel $file $ext $dir $obj
-		
+		} else { 
+
+			        ::dnd_object_create::send_filename $mytoplevel $file $ext $dir $obj
+				 	
 		}
 	
 	}
@@ -103,56 +124,35 @@ proc ::dnd_object_create::make_object {w obj} {
 }
 
 
-#------------------------------------------------------------------------------#
-# 2018 Modification
+# ------------------------- 2018 Modification --------------------------------#
 
 proc ::dnd_object_create::send_filename {w file ext dir obj} {
 	variable x
     variable y
     set posx [expr $x - [winfo rootx $w]]
     set posy [expr $y - [winfo rooty $w]]
-
+	
 ## same function like Ctrl+M
 ## the definition of this function is in Tcl/pd_connect.tcl, line 50
+	
+	#---------------------------- 2021 Modification ----------------------------#
+	# if variable contains only digits: prepend \\, else it's a symbol and all spaces are replaced by "\\\ "
+	if { [ regexp {^(?:[0-9]+|[a-zA-Z]+)$} $obj ] } {set name_bsl \\$obj} else {set name_bsl [regsub -all {\s+} $obj "\\\ "]}
+	if { [ regexp {^(?:[0-9]+|[a-zA-Z]+)$} $dir ] } {set path_bsl \\$dir} else {set path_bsl [regsub -all {\s+} $dir "\\\ "]}
+	if { [ regexp {^(?:[0-9]+|[a-zA-Z]+)$} $file ] } {set fullname_bsl \\$file} else {set fullname_bsl [regsub -all {\s+} $file "\\\ "]}
+	# special case here since $ext starts with a dot, so we have to change the regexp
+	if { [ regexp {^.(?:[0-9]+|[a-zA-Z]+)$} $ext ] } {set ext_bsl \\$ext} else {set ext_bsl [regsub -all {\s+} $ext "\\\ "]}
+	if { $ext == ""} { set ext_bsl "NULL" }
+	 	
+	set ascii_name [::dnd_object_create::string_to_ascii $obj]
+	set ascii_path [::dnd_object_create::string_to_ascii $dir]
+	set ascii_fullname [::dnd_object_create::string_to_ascii $file]
+	set ascii_ext [::dnd_object_create::string_to_ascii $ext]
 
-#------------------------------------------------------------------------------#
-# modified by jyg on 14.02.19
-# from pdtk_canvas.tcl, lines 276 and following ones
-
-      # get the canvas location that is currently the top left corner in the window
-    set tkcanvas [tkcanvas_name $w]
-    set scrollregion [$tkcanvas cget -scrollregion]
-    set left_xview_pix [expr [lindex [$tkcanvas xview] 0] * [lindex $scrollregion 2] ]
-    set top_yview_pix [expr [lindex [$tkcanvas yview] 0]* [lindex $scrollregion 3]]
-      # take the absolute mouse coords, substract the root of the canvas
-      # window, and add the area that is obscured by scrolling
-    set xrel [expr int($x - [winfo rootx $w] + $left_xview_pix)]
-    set yrel [expr int($y - [winfo rooty $w] + $top_yview_pix)]
-#------------------------------------------------------------------------------#
-
-
-
-
-
-
-#------------------------------------------------------------------------------#
-# modified by oliver on 29.10.18
-
-    ::pd_connect::pdsend "dnd-dropped -ext symbol $ext, -name list $obj, -path list $dir, -window-name symbol $::focused_window, -global-coords list $x $y, -drop list $posx $posy $file, rel-coords list $xrel $yrel"
-#------------------------------------------------------------------------------#
-    
- 
-#------------------------------------------------------------------------------#
-# modified by jyg on 14.02.19
-# generate click event where the file has been dropped
-
-   ::pd_connect::pdsend "$w mouse $xrel $yrel 1 0"
-   ::pd_connect::pdsend "$w mouseup $xrel $yrel 1"
-    # afterclick signal
-   ::pd_connect::pdsend "dnd-dropped -done"
-
-#------------------------------------------------------------------------------#
-
+	::pd_connect::pdsend "dnd-dropped -ext symbol $ext_bsl, -name symbol $name_bsl, -path symbol $path_bsl, -fullname symbol $fullname_bsl, -window-name symbol $::focused_window, -global-coords list $x $y, -drop list $posx $posy $fullname_bsl, -ascii-name list $ascii_name, -ascii-path list $ascii_path, -ascii-ext list $ascii_ext $, -ascii-fullname list $ascii_fullname "	
+	
+	#-------------------------- End of 2021 Modification -----------------------#
+	# ---------------------- End of 2018 Modification -------------------------#
 
     ::pdwindow::debug "$w file $posx $posy $::focused_window $file \n"
     return "dropped"
