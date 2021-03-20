@@ -5,15 +5,14 @@
 # META AUTHOR IOhannes m zmölnig <zmoelnig@iem.at>
 # META AUTHOR Patrice Colet <colet.patrice@free.fr>
 # META AUTHOR Hans-Christoph Steiner <eighthave@users.sourceforge.net>
-# 2018 -2021 Modifications by Oliver Stotz and Lucas Cordiviola 
+# 2018 - 2021 Modifications by Oliver Stotz and Lucas Cordiviola 
  
 ::pdwindow::post "-\n"
 ::pdwindow::post "DND-Plugin 0.3\n"
 ::pdwindow::post "Drag and Drop on Pd window or patch canvas\n\n"
 ::pdwindow::post "See $::current_plugin_loadpath/dnd-plugin-help.pd\n"
 ::pdwindow::post "-\n"
-#  ::pdwindow::post "Modified 18.03.2021 (Lucarda)\n"
-#  ::pdwindow::post "-\n"
+
 
 #lappend ::auto_path $::current_plugin_loadpath
 set dir [file join $::current_plugin_loadpath tkdnd]
