@@ -1,5 +1,4 @@
-
-========================
+=====================================================================
 
 If you downloaded this pkg from Deken you are ready to go, if not keep reading.
 
@@ -20,11 +19,26 @@ Restart Pd.
 You should see something like this printed to the console:
 
 -
-Drag and Drop on Window
-Drag and Drop on Canvas
-Usage:
-See D:/pd_0.48/extra/dnd-plugin/dnd-plugin-help.pd
+DND-Plugin 0.3
+Drag and Drop on Pd window or patch canvas
 
+See D:/pd_0.51/extra/dnd-plugin/dnd-plugin-help.pd
 -
 
 ======================================================================
+======================================================================
+
+
+
+version history:
+
+0.3
+
+fixes a bug where zero padded filenames with spaces would produce a wrong filename output
+adds extra routing options for ascii encoded name, path, extension and full name of dropped file.
+
+======================================================================
+
+0.2
+
+first release
