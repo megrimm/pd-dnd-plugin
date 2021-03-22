@@ -165,7 +165,7 @@ proc ::dnd_object_create::send_filename {w file ext dir obj} {
 	set ascii_fullname [::dnd_object_create::string_to_ascii $file]
 	set ascii_ext [::dnd_object_create::string_to_ascii $ext]
 
-	::pd_connect::pdsend "dnd-dropped -ext symbol $ext_bsl, -name symbol $name_bsl, -path symbol $path_bsl, -fullname symbol $fullname_bsl, -window-name symbol $::focused_window, -global-coords list $x $y, -drop list $posx $posy $fullname_bsl, -ascii-name list $ascii_name, -ascii-path list $ascii_path, -ascii-ext list $ascii_ext $, -ascii-fullname list $ascii_fullname "	
+	::pd_connect::pdsend "dnd-dropped -ext symbol $ext_bsl, -name symbol $name_bsl, -path symbol $path_bsl, -fullname symbol $fullname_bsl, -window-name symbol $::focused_window, -global-coords list $x $y, -ascii-ext list $ascii_ext, -ascii-name list $ascii_name, -ascii-path list $ascii_path, -ascii-fullname list $ascii_fullname, -drop list $posx $posy $fullname_bsl"	
 	
 	#-------------------------- End of 2021 Modification -----------------------#
 	# ---------------------- End of 2018 Modification -------------------------#

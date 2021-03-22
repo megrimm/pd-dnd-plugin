@@ -1,4 +1,4 @@
-#N canvas 177 2 679 742 12;
+#N canvas 377 3 679 742 12;
 #X text 59 50 2) drop .pd files to this or any window --> adds the
 .pd file as an abstraction in the window.;
 #X text 58 130 4) drop any file to this or any window --> use [dnd-fileinfo]
@@ -50,10 +50,8 @@ or any window --> adds the text as a comment in the window.;
 #X obj 127 184 dnd-fileinfo;
 #X text 239 185 same as:;
 #X obj 310 184 dnd-plugin/dnd-fileinfo;
-#N canvas 548 126 627 433 ascii 0;
+#N canvas 786 56 627 433 ascii 0;
 #X obj 45 32 r dnd-dropped;
-#X obj 45 65 route -ascii-name -ascii-path -ascii-ext -ascii-fullname
-, f 57;
 #X obj 45 312 list tosymbol;
 #X symbolatom 45 339 0 0 0 0 - - -;
 #X obj 144 233 list tosymbol;
@@ -64,15 +62,17 @@ or any window --> adds the text as a comment in the window.;
 #X symbolatom 342 125 0 0 0 0 - - -;
 #X text 166 32 output the infos of the dropped file as ascii coded
 lists;
-#X connect 0 0 1 0;
+#X obj 45 65 route -ascii-fullname -ascii-path -ascii-name -ascii-ext
+, f 57;
+#X connect 0 0 10 0;
 #X connect 1 0 2 0;
-#X connect 1 1 4 0;
-#X connect 1 2 6 0;
-#X connect 1 3 8 0;
-#X connect 2 0 3 0;
-#X connect 4 0 5 0;
-#X connect 6 0 7 0;
-#X connect 8 0 9 0;
+#X connect 3 0 4 0;
+#X connect 5 0 6 0;
+#X connect 7 0 8 0;
+#X connect 10 0 1 0;
+#X connect 10 1 3 0;
+#X connect 10 2 5 0;
+#X connect 10 3 7 0;
 #X restore 569 510 pd ascii;
 #X text 545 20 updated 2021;
 #X connect 4 0 5 0;
