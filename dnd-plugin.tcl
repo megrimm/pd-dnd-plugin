@@ -92,9 +92,10 @@ proc ::dnd_object_create::dropped_object_files {mytoplevel files} {
                 }
 	    }
         if { 0 == $found } {
-            set obj [file rootname $file]
-            ::pdwindow::debug "dropping $obj on $::focused_window\n"
-            ::dnd_object_create::make_object $mytoplevel $obj
+			if { [ regexp {^(?:[0-9]+|[a-zA-Z]+)$} $file ] } {set patchname_bsl \\$file} else {set patchname_bsl [regsub -all {\s+} $file "\\\ "]}
+            set dropobj [file rootname $patchname_bsl]
+            ::pdwindow::debug "dropping $dropobj on $::focused_window\n"
+            ::dnd_object_create::make_object $mytoplevel $dropobj
  
 			}
 			
