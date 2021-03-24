@@ -159,14 +159,8 @@ proc ::dnd_object_create::send_filename {w file ext dir obj} {
 
 
 	#---------------------------- 2021 Modification ----------------------------#
-	# if variable contains only digits: prepend \\, else it's a symbol and all spaces are replaced by "\\\ "
-	# if { [ regexp {^(?:[0-9]+|[a-zA-Z]+)$} $obj ] } {set name_bsl \\$obj} else {set name_bsl [regsub -all {\s+} $obj "\\\ "]}
-	# if { [ regexp {^(?:[0-9]+|[a-zA-Z]+)$} $dir ] } {set path_bsl \\$dir} else {set path_bsl [regsub -all {\s+} $dir "\\\ "]}
-	# if { [ regexp {^(?:[0-9]+|[a-zA-Z]+)$} $file ] } {set fullname_bsl \\$file} else {set fullname_bsl [regsub -all {\s+} $file "\\\ "]}
-	# special case here since $ext starts with a dot, so we have to change the regexp
-	if { [ regexp {^.(?:[0-9]+|[a-zA-Z]+)$} $ext ] } {set ext_bsl \\$ext} else {set ext_bsl [regsub -all {\s+} $ext "\\\ "]}
-	if { $ext == ""} { set ext_bsl "NULL" }
-	 	
+	
+	
 	set ascii_name [::dnd_object_create::string_to_ascii $obj]
 	set ascii_path [::dnd_object_create::string_to_ascii $dir]
 	set ascii_fullname [::dnd_object_create::string_to_ascii $file]
@@ -175,6 +169,10 @@ proc ::dnd_object_create::send_filename {w file ext dir obj} {
 	set name_bsl [::dnd_object_create::correct_spaces $obj]
 	set path_bsl [::dnd_object_create::correct_spaces $dir]
 	set fullname_bsl [::dnd_object_create::correct_spaces $file]
+	
+	# special case here since $ext starts with a dot, so we have to change the regexp
+	if { [ regexp {^.(?:[0-9]+|[a-zA-Z]+)$} $ext ] } {set ext_bsl \\$ext} else {set ext_bsl [regsub -all {\s+} $ext "\\\ "]}
+	if { $ext == ""} { set ext_bsl "NULL" }
 	
 	::pd_connect::pdsend "dnd-dropped -ext symbol $ext_bsl, -name symbol $name_bsl, -path symbol $path_bsl, -fullname symbol $fullname_bsl, -window-name symbol $::focused_window, -global-coords list $x $y, -ascii-ext list $ascii_ext, -ascii-name list $ascii_name, -ascii-path list $ascii_path, -ascii-fullname list $ascii_fullname, -drop list $posx $posy $fullname_bsl"	
 	
