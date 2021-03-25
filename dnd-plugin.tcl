@@ -8,7 +8,7 @@
 # 2018 - 2021 Modifications by Oliver Stotz and Lucas Cordiviola 
  
 ::pdwindow::post "-\n"
-::pdwindow::post "DND-Plugin 0.3\n"
+::pdwindow::post "DND-Plugin 0.3.1\n"
 ::pdwindow::post "Drag and Drop on Pd window or patch canvas\n\n"
 ::pdwindow::post "See $::current_plugin_loadpath/dnd-plugin-help.pd\n"
 ::pdwindow::post "-\n"

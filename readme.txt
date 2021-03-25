@@ -32,6 +32,12 @@ See D:/pd_0.51/extra/dnd-plugin/dnd-plugin-help.pd
 
 version history:
 
+0.3.1
+
+fix: a .pd file can be dropped onto a patch canvas but we also need to escape spaces in the filename here with a literal backslash, else the object can't be created.
+
+======================================================================
+
 0.3
 
 fixes a bug where zero padded filenames with spaces would produce a wrong filename output
