@@ -1,8 +1,5 @@
-#N canvas 300 50 600 300 10;
-#N canvas 298 454 384 142 subpatch 1;
-#X text 78 26 no output if you drop anything here !;
-#X text 77 76 (only the global [r dnd-dropped] will still output),
-f 34;
+#N canvas 300 50 600 350 10;
+#N canvas 298 454 384 142 subpatch 0;
 #X restore 69 257 pd subpatch;
 #X text 68 94 DROP A FILE OR FOLDER HERE !;
 #X text 65 107 (only works in this window);
@@ -21,10 +18,10 @@ editmode 0;
 #X obj 245 55 s \$0-ol_help;
 #X msg 118 64 520 50 600 400;
 #X obj 118 219 s \$0-frame-r;
-#X floatatom 118 176 5 0 0 0 - - -, f 5;
+#X floatatom 118 176 5 0 0 0 - - -;
 #X obj 28 450 s \$0-title-r;
 #X msg 98 406 label \$1;
-#X floatatom 263 143 5 0 0 0 - - -, f 5;
+#X floatatom 263 143 5 0 0 0 - - -;
 #X obj 263 183 s \$0-bgnd-r;
 #X obj 56 119 del 10;
 #X obj 56 99 t b b;
@@ -73,7 +70,7 @@ editmode 0;
 #X text 57 2 string in;
 #X msg 136 25 #/zi 3 4 oo ä;
 #X msg 229 25 1.23457e+019;
-#X floatatom 315 28 5 0 0 0 - - -, f 5;
+#X floatatom 315 28 5 0 0 0 - - -;
 #X obj 67 22 cnv 13 34 15 empty empty empty 2 2 0 9 -163816 -66577
 0;
 #X obj 139 487 cnv 14 40 15 empty empty empty 2 2 0 9 -163840 -66577
@@ -134,8 +131,8 @@ editmode 0;
 #X msg 28 740 label \$1 \, label_pos \$2 \$3;
 #X obj 531 524 unpack;
 #X msg 531 500 32 -32;
-#X floatatom 493 391 5 0 0 0 - - -, f 5;
-#X floatatom 531 391 5 0 0 0 - - -, f 5;
+#X floatatom 493 391 5 0 0 0 - - -;
+#X floatatom 531 391 5 0 0 0 - - -;
 #X obj 531 421 t b f;
 #X msg 545 471 set \$1 \$2;
 #X obj 493 471 t b b l;
@@ -147,12 +144,12 @@ editmode 0;
 #X msg 263 161 vis_size \$1 55;
 #X msg 260 413 size 1 \, pos 300 55 \, vis_size 1 1 \, color \$1 \$1
 2 \, label_font 1 11 \, label, f 26;
-#X floatatom 79 174 5 0 0 0 - - -, f 5;
+#X floatatom 79 174 5 0 0 0 - - -;
 #X obj 118 153 - 13;
 #X obj 263 122 + 10;
 #X obj 263 219 - 254;
 #X obj 56 56 t b f;
-#X msg 260 390 -1.47533e+006;
+#X msg 260 390 -1.51675e+007;
 #X msg 260 368 set \$1;
 #X obj 56 11 loadbang;
 #N canvas 36 456 791 300 better_colors 0;
@@ -222,8 +219,8 @@ f 23;
 #X msg 153 608 empty;
 #X obj 531 272 loadbang;
 #X msg 531 293 set -26;
-#X floatatom 73 292 5 0 0 0 - - -, f 5;
-#X symbolatom 108 292 20 0 0 0 - - -, f 20;
+#X floatatom 73 292 5 0 0 0 - - -;
+#X symbolatom 108 292 20 0 0 0 - - -;
 #X obj 73 333 pack 0 s;
 #X obj 108 310 t b s;
 #X obj 73 354 t b l;
@@ -335,19 +332,19 @@ f 23;
 #X connect 97 0 28 0;
 #X connect 98 0 28 0;
 #X restore 9 38 pd init;
-#X obj 1 1 cnv 8 597 55 \$0-bgnd \$0-bgnd-r empty 0 20 0 4 -22530 -22530
-0;
+#X obj 1 1 cnv 8 597 55 \$0-bgnd \$0-bgnd-r empty 0 20 0 4 -235265
+-235265 0;
 #X obj 5 6 cnv 8 587 45 \$0-frame \$0-frame-r empty 20 20 0 14 -1 -262144
 0;
 #X obj 6 7 cnv 15 250 43 \$0-title \$0-title-r dnd_parent 66 21 1 24
 -236864 -64 0;
 #X obj 258 7 cnv 15 333 43 \$0-frame2 \$0-frame2-r empty 25 18 1 24
 -216384 -4160 0;
-#X obj 300 55 cnv 1 1 1 \$0-text1 \$0-text1-r get name of file or folder dropped
-32 -32 1 11 -22530 -66577 0;
-#X obj 300 55 cnv 1 1 1 \$0-text2 \$0-text2-r on parent patcher window
-32 -18 1 11 -22530 -66577 0;
-#X obj 300 55 cnv 1 1 1 \$0-text3 \$0-text3-r empty 32 -4 1 11 -22530
+#X obj 300 55 cnv 1 1 1 \$0-text1 \$0-text1-r get\ name\ of\ file\ or\ folder\ dropped
+32 -32 1 11 -235265 -66577 0;
+#X obj 300 55 cnv 1 1 1 \$0-text2 \$0-text2-r on\ parent\ patcher\ window
+32 -18 1 11 -235265 -66577 0;
+#X obj 300 55 cnv 1 1 1 \$0-text3 \$0-text3-r empty 32 -4 1 11 -235265
 -66577 0;
 #X text 329 91 For region-defined drag and drop \, please use [ol_dropfile]
 from the "ol_GUI" collection., f 34;
@@ -362,6 +359,10 @@ from the "ol_GUI" collection., f 34;
 1;
 #X text 385 207 watch complete output from dnd-plugin in the PD console
 window, f 25;
+#X obj 69 308 cnv 10 130 20 empty empty needs IEMGUTS 10 11 0 14 -4160
+-262144 0;
+#X text 216 305 download IEMGUTS with deken (Help/Find Externals) to
+make this patch work, f 39;
 #X connect 17 0 19 0;
 #X connect 18 0 14 0;
 #X connect 18 1 13 0;

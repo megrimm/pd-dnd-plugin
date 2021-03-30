@@ -5,14 +5,14 @@
 # META AUTHOR IOhannes m zmölnig <zmoelnig@iem.at>
 # META AUTHOR Patrice Colet <colet.patrice@free.fr>
 # META AUTHOR Hans-Christoph Steiner <eighthave@users.sourceforge.net>
-# 2018 Modifications by Oliver Stotz and Lucas Cordiviola 
+# 2018 - 2021 Modifications by Oliver Stotz and Lucas Cordiviola 
  
 ::pdwindow::post "-\n"
-::pdwindow::post "Drag and Drop on Window\n"
-::pdwindow::post "Drag and Drop on Canvas\n"
-::pdwindow::post "Usage:\n"
+::pdwindow::post "DND-Plugin 0.3.1\n"
+::pdwindow::post "Drag and Drop on Pd window or patch canvas\n\n"
 ::pdwindow::post "See $::current_plugin_loadpath/dnd-plugin-help.pd\n"
 ::pdwindow::post "-\n"
+
 
 #lappend ::auto_path $::current_plugin_loadpath
 set dir [file join $::current_plugin_loadpath tkdnd]
@@ -53,6 +53,30 @@ proc ::dnd_object_create::open_dropped_files {files} {
    }
 }
 
+# ---------------------------- 2021 Modification ---------------------------- #
+# convert string to ascii values
+proc ::dnd_object_create::string_to_ascii {string_value} {
+    set map {}
+    set result [lrepeat [string length $string_value] DUMMY]
+    set idx 0
+    foreach c [split $string_value ""] {
+        if {![dict exists $map $c]} {
+            scan $c %c ch
+            dict set map $c $ch
+        }
+        lset result $idx [dict get $map $c]
+        incr idx
+    }
+    return $result
+}
+
+# prepend white spaces with a backslash
+proc ::dnd_object_create::correct_spaces {string_value} {
+    if {[ regexp {^(?:[0-9]+|[a-zA-Z]+)$} $string_value ]} {set result \\$string_value} else {set result [regsub -all {\s+} $string_value "\\\ "]}
+    return $result
+}
+
+# ----------------------------End 2021 Modification ------------------------- #
 
 proc ::dnd_object_create::dropped_object_files {mytoplevel files} {
     foreach file $files {
@@ -74,15 +98,18 @@ proc ::dnd_object_create::dropped_object_files {mytoplevel files} {
                 }
 	    }
         if { 0 == $found } {
-            set obj [file rootname $file]
-            ::pdwindow::debug "dropping $obj on $::focused_window\n"
-            ::dnd_object_create::make_object $mytoplevel $obj
+			set patchname_bsl [::dnd_object_create::correct_spaces $file]
+            set dropobj [file rootname $patchname_bsl]
+            ::pdwindow::debug "dropping $dropobj on $::focused_window\n"
+            ::dnd_object_create::make_object $mytoplevel $dropobj
  
 			}
 			
 		# 2018 Modification
-		} else { ::dnd_object_create::send_filename $mytoplevel $file $ext $dir $obj
-		
+		} else { 
+
+			        ::dnd_object_create::send_filename $mytoplevel $file $ext $dir $obj
+				 	
 		}
 	
 	}
@@ -103,17 +130,17 @@ proc ::dnd_object_create::make_object {w obj} {
 }
 
 
-#------------------------------------------------------------------------------#
-# 2018 Modification
+# ------------------------- 2018 Modification --------------------------------#
 
 proc ::dnd_object_create::send_filename {w file ext dir obj} {
 	variable x
     variable y
     set posx [expr $x - [winfo rootx $w]]
     set posy [expr $y - [winfo rooty $w]]
-
+	
 ## same function like Ctrl+M
 ## the definition of this function is in Tcl/pd_connect.tcl, line 50
+
 
 #------------------------------------------------------------------------------#
 # modified by jyg on 14.02.19
@@ -131,18 +158,30 @@ proc ::dnd_object_create::send_filename {w file ext dir obj} {
 #------------------------------------------------------------------------------#
 
 
-
-
-
-
-#------------------------------------------------------------------------------#
-# modified by oliver on 29.10.18
-
-    ::pd_connect::pdsend "dnd-dropped -ext symbol $ext, -name list $obj, -path list $dir, -window-name symbol $::focused_window, -global-coords list $x $y, -drop list $posx $posy $file, rel-coords list $xrel $yrel"
-#------------------------------------------------------------------------------#
-    
- 
-#------------------------------------------------------------------------------#
+	#---------------------------- 2021 Modification ----------------------------#
+	
+	
+	set ascii_name [::dnd_object_create::string_to_ascii $obj]
+	set ascii_path [::dnd_object_create::string_to_ascii $dir]
+	set ascii_fullname [::dnd_object_create::string_to_ascii $file]
+	set ascii_ext [::dnd_object_create::string_to_ascii $ext]
+	
+	set name_bsl [::dnd_object_create::correct_spaces $obj]
+	set path_bsl [::dnd_object_create::correct_spaces $dir]
+	set fullname_bsl [::dnd_object_create::correct_spaces $file]
+	
+	# special case here since $ext starts with a dot, so we have to change the regexp
+	if { [ regexp {^.(?:[0-9]+|[a-zA-Z]+)$} $ext ] } {set ext_bsl \\$ext} else {set ext_bsl [regsub -all {\s+} $ext "\\\ "]}
+	if { $ext == ""} { set ext_bsl "NULL" }
+	
+	::pd_connect::pdsend "dnd-dropped -ext symbol $ext_bsl, -name symbol $name_bsl, -path symbol $path_bsl, -fullname symbol $fullname_bsl, -window-name symbol $::focused_window, -global-coords list $x $y, -ascii-ext list $ascii_ext, -ascii-name list $ascii_name, -ascii-path list $ascii_path, -ascii-fullname list $ascii_fullname, -drop list $posx $posy $fullname_bsl"	
+	
+	#-------------------------- End of 2021 Modification -----------------------#
+	# ---------------------- End of 2018 Modification -------------------------#
+	
+	
+	
+	#------------------------------------------------------------------------------#
 # modified by jyg on 14.02.19
 # generate click event where the file has been dropped
 
